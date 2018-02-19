@@ -69,13 +69,16 @@ public class BishopTest extends TestCase {
 	 */
 	public void testCapture () {
 		Board board = new Board();
+		new King(board,WHITE,7,4);
+		new King(board,BLACK,0,4);
+		board.initKings(7, 4, 0, 4);
 		new Bishop(board,WHITE,3,3);
 		new Pawn(board,BLACK,1,1);
 		board.movePiece(board,3,3,1,1,WHITE);
 		assertNull(board.getPiece(3,3));
 		assertEquals(board.getPiece(1, 1).getClass().toString().substring(12),"Bishop");
-		assertEquals(board.getCamp(BLACK).size(),0);
-		assertEquals(board.getCamp(WHITE).size(),1);
+		assertEquals(board.getCamp(BLACK).size(),1);
+		assertEquals(board.getCamp(WHITE).size(),2);
 		new Rook(board,BLACK,2,2);
 		board.movePiece(board,1,1,2,2,WHITE);
 		assertEquals(board.getPiece(2, 2).getClass().toString().substring(12),"Bishop");

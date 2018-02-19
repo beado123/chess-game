@@ -24,6 +24,7 @@ public class ChessTest extends TestCase {
 		testSuite.addTestSuite(PawnTest.class);	
 		testSuite.addTestSuite(PrincessTest.class);	
 		testSuite.addTestSuite(AmazonTest.class);	
+		testSuite.addTestSuite(GameTest.class);	
 		return testSuite;
 	}
 }

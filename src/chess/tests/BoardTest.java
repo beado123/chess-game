@@ -46,17 +46,82 @@ public class BoardTest extends TestCase{
 	}
 	
 	/**
+	 * This function tests the initialization of Amazon and Princess piece
+	 */
+	public void testAddCustomPieces() {
+		Board board = new Board();
+		board.addCustomPieces();
+		assertEquals(board.getPiece(5, 3).getClass().toString().substring(12),"Amazon");
+		assertEquals(board.getPiece(2, 4).getClass().toString().substring(12),"Princess");
+	}
+	
+	/**
+	 * This function tests removing custom pieces
+	 */
+	public void testRemoveCustom() {
+		Board board = new Board();
+		board.addCustomPieces();
+		board.removeCustomPieces();
+		assertEquals(board.getPiece(5, 3),null);
+		assertEquals(board.getPiece(2, 4),null);
+	}
+	
+	/**
 	 * This function tests the initialization of king
 	 */
 	public void testInitKing() {
 		Board board = new Board();
-		new King(board,WHITE,0,4);
-		new King(board,BLACK,7,4);
-		board.initKings(0, 4, 7, 4);
-		assertEquals(board.getKing(WHITE).getRank(),0);
+		new King(board,WHITE,7,4);
+		new King(board,BLACK,0,4);
+		board.initKings(7, 4, 0, 4);
+		assertEquals(board.getKing(WHITE).getRank(),7);
 		assertEquals(board.getKing(WHITE).getFile(),4);
-		assertEquals(board.getKing(BLACK).getRank(),7);
+		assertEquals(board.getKing(BLACK).getRank(),0);
 		assertEquals(board.getKing(BLACK).getFile(),4);
+	}
+	
+	/**
+	 * This function tests updating king's rank and file
+	 */
+	public void testUpdateKing() {
+		Board board = new Board();
+		new King(board,WHITE,7,4);
+		new King(board,BLACK,0,4);
+		board.initKings(7, 4, 0, 4);
+		board.updateKing(WHITE, 5, 4);
+		assertEquals(board.getKing(WHITE).getRank(),5);
+		assertEquals(board.getKing(WHITE).getFile(),4);
+	}
+	
+	/**
+	 * This function tests a move is not legal if it causes the king in check
+	 */
+	public void testProtectKing() {
+		Board board = new Board();
+		new King(board,WHITE,7,4);
+		new King(board,BLACK,0,4);
+		board.initKings(7, 4, 0, 4);
+		new Rook(board,BLACK,5,4);
+		new Pawn(board,WHITE,6,5);
+		assertEquals(board.movePiece(board, 6, 5, 5, 5, WHITE),false);
+		assertEquals(board.movePiece(board, 7, 4, 6, 3, WHITE),true);
+	}
+	
+	/**
+	 * This function tests undo operation.
+	 */
+	public void testUndoMove() {
+		Board board = new Board();
+		new King(board,WHITE,7,4);
+		new King(board,BLACK,0,4);
+		board.initKings(7, 4, 0, 4);
+		Rook myRook = new Rook(board,WHITE,7,0);
+		board.movePiece(board, 7, 0, 6, 0, WHITE);
+		board.undoMove(7, 0, 6, 0, null);
+		assertEquals(board.getPiece(7, 0).getClass().toString().substring(12),"Rook");
+		assertEquals(board.getPiece(6, 0),null);
+		assertEquals(myRook.getRank(),7);
+		assertEquals(myRook.getFile(),0);
 	}
 	
 	/**
@@ -100,58 +165,6 @@ public class BoardTest extends TestCase{
 	 */
 	public void testStaleMate2() {
 		Board board = new Board();
-		new King(board,BLACK,7,5);
-		new King(board,WHITE,5,5);
-		ChessPiece pawn = new Pawn(board,WHITE,6,5);
-		pawn.setFirstMove();
-		board.initKings(5,5,7,5);
-		assertEquals(board.isStaleMate(BLACK),true);
-	}
-	
-	/**
-	 * stale mate test 3
-	 */
-	public void testStaleMate3() {
-		Board board = new Board();
-		new King(board,BLACK,7,0);
-		new King(board,WHITE,5,1);
-		new Bishop(board,BLACK,7,1);
-		new Rook(board,WHITE,7,7);
-		board.initKings(5,1,7,0);
-		assertEquals(board.isStaleMate(BLACK),true);
-	}
-	
-	/**
-	 * stale mate test 4
-	 */
-	public void testStaleMate4() {
-		Board board = new Board();
-		new King(board,BLACK,7,0);
-		new King(board,WHITE,5,1);
-		new Bishop(board,BLACK,7,1);
-		new Rook(board,WHITE,7,7);
-		board.initKings(5,1,7,0);
-		assertEquals(board.isStaleMate(BLACK),true);
-	}
-	
-	/**
-	 * stale mate test 5
-	 */
-	public void testStaleMate5() {
-		Board board = new Board();
-		new King(board,BLACK,0,0);
-		new King(board,WHITE,4,6);
-		new Queen(board,WHITE,2,1);
-		new Pawn(board,BLACK,1,0);
-		board.initKings(2,1,0,0);
-		assertEquals(board.isStaleMate(BLACK),true);	
-	}
-	
-	/**
-	 * stale mate test 6
-	 */
-	public void testStaleMate6() {
-		Board board = new Board();
 		new King(board,BLACK,7,0);
 		new King(board,WHITE,5,0);
 		new Bishop(board,WHITE,3,5);
@@ -161,9 +174,9 @@ public class BoardTest extends TestCase{
 	}
 	
 	/**
-	 * stale mate test 7
+	 * stale mate test 3
 	 */
-	public void testStaleMate7() {
+	public void testStaleMate3() {
 		Board board = new Board();
 		new King(board,BLACK,0,0);
 		new King(board,WHITE,2,2);
@@ -173,9 +186,9 @@ public class BoardTest extends TestCase{
 	}
 	
 	/**
-	 * stale mate test 8
+	 * stale mate test 4
 	 */
-	public void testStaleMate8() {
+	public void testStaleMate4() {
 		Board board = new Board();
 		new King(board,BLACK,0,0);
 		new King(board,WHITE,2,2);

@@ -54,12 +54,14 @@ public class KingTest extends TestCase{
 	 */
 	public void testCapture () {
 		Board board = new Board();
-		new King(board,WHITE,1,4);
-		new Knight(board,BLACK,1,5);
-		board.movePiece(board,1,4,1,5,WHITE);
-		assertNull(board.getPiece(1,4));
-		assertEquals(board.getPiece(1, 5).getClass().toString().substring(12),"King");
-		assertEquals(board.getCamp(BLACK).size(),0);
+		new King(board,WHITE,7,4);
+		new King(board,BLACK,0,4);
+		board.initKings(7, 4, 0, 4);
+		new Knight(board,BLACK,6,5);
+		board.movePiece(board,7,4,6,5,WHITE);
+		assertNull(board.getPiece(7,4));
+		assertEquals(board.getPiece(6, 5).getClass().toString().substring(12),"King");
+		assertEquals(board.getCamp(BLACK).size(),1);
 		assertEquals(board.getCamp(WHITE).size(),1);
 
 	}

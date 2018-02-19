@@ -1,7 +1,5 @@
 package chess;
-import java.util.Scanner;
-import view.GUI;  
-
+import view.GUI;
 
 /**
  * @author Yihan Zhang
@@ -19,7 +17,7 @@ public class Game {
 	public Game() {
 		board = new Board();
 		board.initializePieces();
-		board.initKings(0, 4, 7, 4);
+		board.initKings(7, 4, 0, 4);
 	}
 	
 	/**
@@ -29,17 +27,12 @@ public class Game {
 		return this.board;
 	}
 	
+	/**
+	 * This function starts the chess game application
+	 * @param args
+	 */
 	public static void main(String args[]) {
-		
-		int camp = WHITE;
-		Game newGame = new Game();
-		new GUI(newGame);
-		
-		Scanner input = new Scanner(System.in);
-		/*while(true) {
-			if(newGame.board.isCheckMate(camp))System.out.println(camp==WHITE?"white":"black"+" wins!");
-			if(newGame.board.isStaleMate(camp))System.out.println("Stalemate!");
-			
-		}*/
+		Game game = new Game();
+		new GUI(game);
 	}
 }

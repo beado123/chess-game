@@ -23,7 +23,6 @@ public class Rook extends ChessPiece{
 	public boolean legalMove(Board board, int oldRank, int oldFile, int newRank, int newFile) {
 		//check not out of bound
 		if(!super.legalMove(board,oldRank, oldFile, newRank, newFile))return false;
-		
 		if(super.straightMoveNoLeap(board, oldRank, oldFile, newRank, newFile))return true;
 		return false;
 	}

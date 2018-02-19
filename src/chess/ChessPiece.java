@@ -90,12 +90,12 @@ public class ChessPiece {
 	 * @return whether it's a legal move from current position to the new position
 	 */
 	public boolean legalMove(Board board, int oldRank, int oldFile, int newRank, int newFile) {
-		//piece doesn't move
-		if(oldRank==newRank && oldFile==newFile)return false;
+		
 		//out of dimension
-		else if(newRank>=BOARD_SIZE || newRank<0 ||
+		if(newRank>=BOARD_SIZE || newRank<0 ||
 		newFile>=BOARD_SIZE || newFile<0)return false;
-		else return true;
+		
+		return true;
 	}
 	
 	/**
@@ -119,6 +119,7 @@ public class ChessPiece {
 					if(board.getPiece(oldRank-i,oldFile-i)!=null)return false;
 				}
 				else if(newRank>oldRank && newFile<oldFile) {
+					//System.out.println("inter pieces: "+board.getPiece(oldRank+i,oldFile-i));
 					if(board.getPiece(oldRank+i,oldFile-i)!=null)return false;
 				}
 				else {
@@ -163,7 +164,4 @@ public class ChessPiece {
 		}
 		return false;
 	}
-	
-	
-	
 }

@@ -69,6 +69,9 @@ public class KnightTest extends TestCase {
 	 */
 	public void testMoveToEmptySpaceWithLeap () {
 		Board board = new Board();
+		new King(board,WHITE,7,4);
+		new King(board,BLACK,0,4);
+		board.initKings(7, 4, 0, 4);
 		new Knight(board,WHITE,3,3);
 		//VHH, ULL
 		new Pawn(board,WHITE,4,3);

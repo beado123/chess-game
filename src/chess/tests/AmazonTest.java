@@ -82,6 +82,9 @@ public class AmazonTest extends TestCase {
 	 */
 	public void testMoveToEmptySpaceWithLeap () {
 		Board board = new Board();
+		new King(board,WHITE,7,4);
+		new King(board,BLACK,0,4);
+		board.initKings(7, 4, 0, 4);
 		new Amazon(board,WHITE,3,3);
 		//VHH, ULL
 		new Pawn(board,WHITE,4,3);
@@ -134,13 +137,16 @@ public class AmazonTest extends TestCase {
 	 */
 	public void testCapture () {
 		Board board = new Board();
+		new King(board,WHITE,7,4);
+		new King(board,BLACK,0,4);
+		board.initKings(7, 4, 0, 4);
 		new Amazon(board,WHITE,3,3);
 		new Pawn(board,BLACK,4,2);
 		board.movePiece(board,3,3,4,2,WHITE);
 		assertNull(board.getPiece(3,3));
 		assertEquals(board.getPiece(4, 2).getClass().toString().substring(12),"Amazon");
-		assertEquals(board.getCamp(BLACK).size(),0);
-		assertEquals(board.getCamp(WHITE).size(),1);
+		assertEquals(board.getCamp(BLACK).size(),1);
+		assertEquals(board.getCamp(WHITE).size(),2);
 	}
 	
 	/**

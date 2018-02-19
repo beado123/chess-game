@@ -50,7 +50,27 @@ public class Board {
 	}
 	
 	/**
-	 * This function sets the position, rank, and file for whiteKing and blackKing
+	 * This function adds the custom pieces to board.
+	 */
+	public void addCustomPieces() {
+		new Amazon(this,WHITE,5,3);
+		new Amazon(this,BLACK,2,3);
+		new Princess(this,WHITE,5,4);
+		new Princess(this,BLACK,2,4);
+	}
+	
+	/**
+	 * This function removes custom pieces from board.
+	 */
+	public void removeCustomPieces() {
+		if(this.getPiece(5,3)!=null)this.chessBoard[5][3]=null;
+		if(this.getPiece(5,4)!=null)this.chessBoard[5][4]=null;
+		if(this.getPiece(2,3)!=null)this.chessBoard[2][3]=null;
+		if(this.getPiece(2,4)!=null)this.chessBoard[2][4]=null;
+	}
+	
+	/**
+	 * This function sets the position, rank, and file for whiteKing and blackKing.
 	 * @param whiteRank rank of the white king
 	 * @param whiteFile file of the white king
 	 * @param blackRank rank of the black king
@@ -96,14 +116,6 @@ public class Board {
 	}
 	
 	/**
-	 * @param rank rank we want to place the piece 
-	 * @param file file we want to place the piece 
-	 */
-	public void setPiece(ChessPiece chess, int rank, int file) {
-		this.chessBoard[rank][file] = chess;
-	}
-	
-	/**
 	 * @param piece the piece we want to add to its corresponding camp
 	 */
 	public void addToCamp(ChessPiece piece){
@@ -119,6 +131,32 @@ public class Board {
 	}
 	
 	/**
+	 * @param rank rank we want to place the piece 
+	 * @param file file we want to place the piece 
+	 */
+	public void setPiece(ChessPiece chess, int rank, int file) {
+		this.chessBoard[rank][file] = chess;
+		if(chess!=null) {
+			chess.setRank(rank);
+			chess.setFile(file);
+		}
+	}
+	
+	/**
+	 * This function withdraw the move made by player.
+	 * @param oldRank
+	 * @param oldFile
+	 * @param newRank
+	 * @param newFile
+	 * @param target
+	 */
+	public void undoMove(int oldRank, int oldFile, int newRank, int newFile, ChessPiece captured) {
+		ChessPiece oldPiece = this.getPiece(newRank, newFile);
+		this.setPiece(oldPiece, oldRank, oldFile);
+		this.setPiece(captured, newRank, newFile);
+	}
+	
+	/**
 	 * This function moves given piece to a new location, 
 	 * and captures opponent's pieces if necessary.
 	 * @param board current chess board
@@ -128,22 +166,29 @@ public class Board {
 	 * @param newFile file of the new position
 	 * @param camp camp of the piece we want to move
 	 */
-	public void movePiece(Board board, int oldRank, int oldFile, int newRank, int newFile, int camp) {
+	public boolean movePiece(Board board, int oldRank, int oldFile, int newRank, int newFile, int camp) {
 		
 		if(board.getPiece(oldRank,oldFile).legalMove(board,oldRank, oldFile, newRank, newFile) && 
 				(board.getPiece(newRank,newFile)==null || board.getPiece(newRank,newFile).getCamp()!=camp)) {
 			
-			if(board.getPiece(newRank,newFile)!=null) {
+			ChessPiece oldPiece = getPiece(oldRank,oldFile);
+			ChessPiece captured = board.getPiece(newRank,newFile);
+			board.setPiece(null,oldRank,oldFile) ;
+			board.setPiece(oldPiece,newRank,newFile);
+			//if the move put king in check, withdraw it.
+			if(board.inCheck(camp)) {
+				board.undoMove(oldRank, oldFile, newRank, newFile, captured);
+				return false;
+			}
+			if(captured!=null) {
 				//delete captured piece
-				ChessPiece captured = board.getPiece(newRank,newFile);
 				if(captured.getCamp()==BLACK)blackCamp.remove(captured);
 				else whiteCamp.remove(captured);
 			}
-			ChessPiece oldPiece = getPiece(oldRank,oldFile);
-			board.setPiece(null,oldRank,oldFile) ;
-			board.setPiece(oldPiece,newRank,newFile);
-			
+			if(oldPiece.toString().substring(6,10).equals("Pawn"))oldPiece.setFirstMove();			
+			return true;
 		}
+		return false;
 	}
 	
 	/**
@@ -177,7 +222,6 @@ public class Board {
 		boolean result = true;
 		Vector<ChessPiece> list = camp==BLACK?blackCamp:whiteCamp;
 		ChessPiece king = camp==BLACK?blackKing:whiteKing;
-		
 		if(!inCheck(camp)) {
 			for(int i=0;i<list.size();i++) {
 				ChessPiece curr = list.get(i);
@@ -187,7 +231,7 @@ public class Board {
 					for(int file=0;file<BOARD_SIZE;file++) {
 						
 						ChessPiece target = chessBoard[rank][file];
-						if(!inCheck(camp) && (target==null || target.getCamp()!=camp) &&
+						if((target==null || target.getCamp()!=camp) &&
 								curr.legalMove(this, oldRank, oldFile, rank, file)) {
 							
 							this.chessBoard[rank][file] = curr;
@@ -213,7 +257,6 @@ public class Board {
 		return result;
 	}
 	
-	
 	/**
 	 * This function checks if current camp has a way to get out of check, 
 	 * if not, then is CheckMated
@@ -226,6 +269,7 @@ public class Board {
 		boolean moveKing = false;
 		Vector<ChessPiece> list = camp==BLACK?blackCamp:whiteCamp;
 		ChessPiece king = camp==BLACK?blackKing:whiteKing;
+		if(!inCheck(camp))return false;
 		
 		for(int i=0;i<list.size();i++) {
 			ChessPiece curr = list.get(i);
@@ -244,7 +288,7 @@ public class Board {
 							moveKing = true;
 							this.updateKing(camp, rank, file);
 						}
-						if(!inCheck(camp)) {
+						if(!inCheck(camp)) {		
 							result = false;
 						}
 						chessBoard[oldRank][oldFile]=curr;
